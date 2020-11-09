@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, Response, flash, redirect, ur
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
-from sqlalchemy import func
+from sqlalchemy import Column, String, Integer
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
