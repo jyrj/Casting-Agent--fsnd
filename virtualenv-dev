@@ -2,4 +2,3 @@ $ source /home/jyrj/anaconda3/bin/activate
 $ conda activate Capstone-projects
 $virtual env: "Python3.76: miniconda"
 $pip install pyPi
-$Flask-SQL_ALCHEMY
