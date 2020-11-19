@@ -1,1 +1,1 @@
-web: gunicorn app:./src/api.py
+web: sh -c 'cd ./src/ && gunicorn app:api'
