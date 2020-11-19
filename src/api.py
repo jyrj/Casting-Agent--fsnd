@@ -11,7 +11,7 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-#db_drop_and_create_all()
+db_drop_and_create_all()
 
 # ROUTES
 
@@ -21,5 +21,5 @@ def get_movies():
 
     return jsonify({
         'success': True,
-        'drinks': [movie.movies_model() for movie in movies]
+        'movies': [movie.movies_model() for movie in movies]
     }), 200

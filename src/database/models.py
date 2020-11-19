@@ -42,13 +42,17 @@ class Movie(db.Model):
     id = Column(Integer(), primary_key=True)
     title = Column(String(80), unique=True)
     release_date =  Column(db.DateTime())
+
+    actor_id = Column(Integer(), db.ForeignKey(
+        'actors.id'), nullable=False)
     #connection with other model
 
     def movies_model(self):
         return{
             "id": self.id,
             "title": self.title,
-            "release date": self.release_date
+            "release date": self.release_date,
+            "actors": self.actor_id
         }
 
     '''
@@ -98,5 +102,6 @@ class Actors(db.Model):
     name = Column(String(80))
     age = Column(Integer())
     gender = Column(String(26))
-    
+
+    movies = db.relationship('Movie', backref="actors", lazy=True)
     #backref
