@@ -3,9 +3,9 @@ from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_filename = "database.db"
+#database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
-databse_path = "postgresql:///{}".format(os.path.join(project_dir, database_filename))
+database_path = "postgres://postgres:@localhost:5432/movies"
 
 db = SQLAlchemy()
 
@@ -15,7 +15,7 @@ setup_db(app)
 '''
 
 def setup_db(app):
-    app.config["SQLALCHEMY_DATABASE_URI"] = databse_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
     db.app = app
     db.init_app(app)
@@ -98,4 +98,5 @@ class Actors(db.Model):
     name = Column(String(80))
     age = Column(Integer())
     gender = Column(String(26))
+    
     #backref
