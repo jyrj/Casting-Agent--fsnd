@@ -5,7 +5,8 @@ import json
 
 #database_filename = "database.db"
 #project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = os.environ['DATABASE_URL']
+database_path = 'postgres://bvrlpffleqganr:ed2f4bd02acae685c787adbbb555fca5cd4643f2a544c545dd453b6c369bd8ce@ec2-3-216-92-193.compute-1.amazonaws.com:5432/dd6rfv7k6b0hmk'
+#os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
 
@@ -40,19 +41,15 @@ class Movie(db.Model):
     __tablename__= "movies"
 
     id = Column(Integer(), primary_key=True)
-    title = Column(String(80), unique=True)
-    release_date =  Column(db.DateTime())
+    title = Column(String(120), unique=True, nullable=False)
+    release_date =  Column(db.DateTime(), nullable=False)
 
-    actor_id = Column(Integer(), db.ForeignKey(
-        'actors.id'), nullable=False)
-    #connection with other model
-
-    def movies_model(self):
+    
+    def format(self):
         return{
             "id": self.id,
             "title": self.title,
-            "release date": self.release_date,
-            "actors": self.actor_id
+            "release date": self.release_date
         }
 
     '''
@@ -92,16 +89,66 @@ class Movie(db.Model):
     def update(self):
         db.session.commit()
 
+    '''
     def __repr__(self):
         return json.dumps(self.movies_model())
+    '''
 
-class Actors(db.Model):
+class Actor(db.Model):
     __tablename__="actors"
     
     id = Column(Integer(), primary_key=True)
-    name = Column(String(80))
-    age = Column(Integer())
-    gender = Column(String(26))
+    name = Column(String(80), nullable=False)
+    age = Column(Integer(), nullable=False)
+    gender = Column(String(26), nullable=False)
 
-    movies = db.relationship('Movie', backref="actors", lazy=True)
-    #backref
+    #movies = db.relationship('Movie', backref="actors", lazy=True)
+    
+
+    def format(self):
+        return{
+            "id": self.id,
+            "name": self.name,
+            "age": self.age,
+            "gender": self.gender
+        }
+
+    '''
+    insert()
+        inserts a new model into a database
+        the model must have a unique name
+        the model must have a unique id or null id
+        EXAMPLE
+            actor = Actors(name=actor_name, age=actor_age_in_number, gender=gender_of_actor)
+            actor.insert()
+    '''
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    '''
+    delete()
+        deletes a new model into a database
+        the model must exist in the database
+        EXAMPLE
+            actor = Actors(name=actor_name, age=actor_age_in_number, gender=gender_of_actor)
+            actor.delete()
+    '''
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    '''
+    update()
+        updates a new model into a database
+        the model must exist in the database
+        EXAMPLE
+            actor = Actors.query.filter(Actor.id == id).one_or_none()
+            actor.name = '<New Name>''
+            actor.update()
+    '''
+    def update(self):
+        db.session.commit()
+
+    def __repr__(self):
+        return json.dumps(self.movies_model())
