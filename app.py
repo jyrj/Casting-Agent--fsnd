@@ -65,6 +65,52 @@ def post_movie():
     except Exception:
         abort(500)
 
+@app.route('/movies/<int:id>', methods=['PATCH'])
+def patch_movie(id):
+    '''Update a movie route'''
+
+    data = request.get_json()
+    title = data.get('title', None)
+    release_date = data.get('release_date', None)
+
+    movie = Movie.query.get(id)
+
+    if movie is None:
+        abort(404)
+
+    if title is None or release_date is None:
+        abort(404)
+
+    movie.title = title
+    movie.release_date = release_date
+
+    try:
+        movie.update()
+        return jsonify({
+            'success': True,
+            'movie': movie.format()
+        }), 200
+    except Exception:
+        abort(500)
+
+@app.route('/movies/<int:id>', methods=['DELETE'])
+def delete_movie(id):
+    '''Delete a movie from table'''
+    movie = Movie.query.get(id)
+    
+    if movie is None:
+        abort(404)
+    try:
+        movie.delete()
+        return jsonify({
+            'success': True,
+            'message': 'movies id {}, titled {} was deleted'.format(movie.id, movie.title)
+        })
+    except Exception:
+        db.session.rollback()
+        abort(500)
+
+
 if __name__ == "__main__":
     app.run()
 
