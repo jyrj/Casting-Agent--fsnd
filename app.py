@@ -4,7 +4,7 @@ from sqlalchemy import exc
 import json
 from flask_cors import CORS
 
-from .src.database.models import db_drop_and_create_all, setup_db, Movie, Actor
+from src.database.models import db_drop_and_create_all, setup_db, Movie, Actor
 #from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
@@ -65,6 +65,8 @@ def post_movie():
     except Exception:
         abort(500)
 
+if __name__ == "__main__":
+    app.run()
 
 
 
