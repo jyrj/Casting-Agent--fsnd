@@ -111,6 +111,115 @@ def delete_movie(id):
         abort(500)
 
 
+
+"""ACTORS ROUTES"""
+
+@app.route('/actors', methods=['GET'])
+def get_actors():
+    '''Get all actors'''
+
+    actors = Actor.query.all()
+
+    return jsonify({
+        'success': True,
+        'actors': [actor.format() for actor in actors]
+    }), 200
+
+@app.route('/actors/<int:id>', methods=['GET'])
+def get_actor_by_id(id):
+    '''Get actor by Actor ID'''
+
+    actor = Actor.query.get(id)
+
+    #return 404 if Actor with ID is not present
+    if actor is None:
+        abort(404)
+    else:
+        return jsonify({
+            'success': True,
+            'actor': actor.format()
+        }), 200
+
+@app.route('/actors', methods=['POST'])
+def post_actor():
+    '''Post new Actor to the table'''
+
+    data = request.get_json()
+
+    name = data.get('name', None)
+    age = data.get('age', None)
+    gender = data.get('gender', None)
+
+    if name is None or age is None or gender is None:
+        abort(400)
+
+    actor = Actor(name=name, age= age, gender= gender)
+
+    try:
+        actor.insert()
+        return jsonify({
+            'success': True,
+            'actor': actor.format()
+        }), 201
+    
+    except Exception:
+        abort(500)
+
+
+@app.route('/actors/<int:id>', methods=['PATCH'])
+def patch_actor(id):
+    '''Update a actor route'''
+
+    data = request.get_json()
+    name = data.get('name', None)
+    gender = data.get('gender', None)
+    age = data.get('age', None)
+
+    actor = Actor.query.get(id)
+
+    if actor is None:
+        abort(404)
+
+    if name is None or gender is None or age is None:
+        abort(404)
+
+    actor.name = name
+    actor.gender = gender
+    actor.age = age
+
+    try:
+        actor.update()
+        return jsonify({
+            'success': True,
+            'actor': actor.format()
+        }), 200
+    except Exception:
+        abort(500)
+        
+
+@app.route('/actors/<int:id>', methods=['DELETE'])
+def delete_actor(id):
+    '''Delete an Actor entry from table'''
+
+    actor = Actor.query.get(id)
+
+    if actor is None:
+        abort(404)
+
+    try:
+        actor.delete()
+        return jsonify({
+            'success': True,
+            'message': 'actor id {}, named {} was deleted'.format(actor.id, actor.name)
+        })
+    except Exception:
+        db.session.rollback()
+        abort(500)
+
+
+    
+
+
 if __name__ == "__main__":
     app.run()
 
