@@ -1,1 +1,1 @@
-web: sh -c 'cd ./src/ && gunicorn app:api'
+web: gunicorn app:app
