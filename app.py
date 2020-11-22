@@ -56,6 +56,16 @@ auth0 = oauth.register(
 def login():
     return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE)
 
+@app.route('/dashboard')
+@requires_signed_in
+def dashboard():
+    token=session['jwt_token']
+    return jsonify({
+        "success": True,
+        "auth": True,
+        "jwt": token
+    })
+
 '''
 @app.route('/login')
 def login():
@@ -69,6 +79,7 @@ def login():
     
     return auth0.authorize_redirect(redirect_uri=login_uri)
 '''
+
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
@@ -79,7 +90,7 @@ def callback_handling():
     # Store the user information in flask session.
     session['jwt_token'] = token
 
-    return redirect('/movies')
+    return redirect('/dashboard')
 
 
 
