@@ -1,8 +1,11 @@
-# [MOCK README: Test Driven Approach for developing API]
+# Casting Agency- Udacity Full stack project
 
-# Backend
+[Link towards API](https://casting-agency-jyrj.herokuapp.com/)
 
-This repository contains backend source code for the projet.
+This project is my capstone project for Udacity's Fullstack Nanodegree program. This application will serve as a backend for a company that is responsible for creating movies and managing and assigning actors to those movies.
+Authorized users can interact with the API to view, add, update, delete Movies and Actors details. (RBAC enabled)
+
+
 
 ## Getting Started
 
@@ -28,60 +31,292 @@ pip install -r requirements.txt
 
 This will install all of the required packages we selected within the `requirements.txt` file.
 
-Dependencies might show some conflicts, for any queries, start an issue. Preferrably the dependencies must be installed over mentioned environment, otherwise, will lead to WHEEL_BUILD_ERROR.
+
+### Endpoints
+
+#### GET /movies
+
+- General:
+
+  - Returns all the movies.
+  - Roles authorized : Casting Assistant,Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/movies`
+
+```json
+{
+  "movies": [
+    {
+      "id": 1,
+      "release_date": "Mon, 06 May 2019 00:00:00 GMT",
+      "title": "Terminator Dark Fate"
+    },
+    {
+      "id": 2,
+      "release_date": "Tue, 06 May 2003 00:00:00 GMT",
+      "title": "Terminator Rise of the machines"
+    }
+  ],
+  "success": true
+}
+```
+
+#### GET /movies/\<int:id\>
+
+- General:
+
+  - Route for getting a specific movie.
+  - Roles authorized : Casting Assistant,Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/movies/1`
+
+```json
+{
+  "movie": {
+    "id": 1,
+    "release_date": "Mon, 06 May 2019 00:00:00 GMT",
+    "title": "Terminator Dark Fate"
+  },
+  "success": true
+}
+```
+
+#### POST /movies
+
+- General:
+
+  - Creates a new movie based on a payload.
+  - Roles authorized : Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/movies -X POST -H "Content-Type: application/json" -d '{ "title": "Natasha romanov", "release_date": "2020-05-06" }'`
+
+```json
+{
+  "movie": {
+    "id": 3,
+    "release_date": "Wed, 06 May 2020 00:00:00 GMT",
+    "title": "Wolf of Wall Street"
+  },
+  "success": true
+}
+```
+
+#### PATCH /movies/\<int:id\>
+
+- General:
+
+  - Patches a movie based on a payload.
+  - Roles authorized : Casting Director, Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/movies/3 -X POST -H "Content-Type: application/json" -d '{ "title": "Natasha romanov patched", "release_date": "2020-05-06" }'`
+
+```json
+{
+  "movie": {
+    "id": 3,
+    "release_date": "Wed, 06 May 2020 00:00:00 GMT",
+    "title": "Natasha romanov patched"
+  },
+  "success": true
+}
+```
+
+#### DELETE /movies/\<int:id\>
+
+- General:
+
+  - Deletes a movies by id form the url parameter.
+  - Roles authorized : Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/movies/3 -X DELETE`
+
+```json
+{
+  "message": "movie id 3, titled Spiderman was deleted",
+  "success": true
+}
+```
+
+#### GET /actors
+
+- General:
+
+  - Returns all the actors.
+  - Roles authorized : Casting Assistant,Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/actors`
+
+```json
+{
+  "actors": [
+    {
+      "age": 54,
+      "gender": "male",
+      "id": 1,
+      "name": "Leondardo DiCaprio"
+    },
+    {
+      "age": 50,
+      "gender": "male",
+      "id": 2,
+      "name": "Bruce Wills"
+    }
+  ],
+  "success": true
+}
+```
+
+#### GET /actors/\<int:id\>
+
+- General:
+
+  - Route for getting a specific actor.
+  - Roles authorized : Casting Assistant,Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/actors/1`
+
+```json
+{
+  "actor": {
+    "age": 40,
+    "gender": "male",
+    "id": 1,
+    "name": "Will Smith"
+  },
+  "success": true
+}
+```
+
+#### POST /actors
+
+- General:
+
+  - Creates a new actor based on a payload.
+  - Roles authorized : Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/actors -X POST -H "Content-Type: application/json" -d '{ "name": "Mary", "age": 22, "gender": "female" }'`
+
+```json
+{
+  "actor": {
+    "age": 22,
+    "gender": "female",
+    "id": 3,
+    "name": "Mary"
+  },
+  "success": true
+}
+```
+
+#### PATCH /actors/\<int:id\>
+
+- General:
+
+  - Patches an actor based on a payload.
+  - Roles authorized : Casting Director, Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/actors/3 -X POST -H "Content-Type: application/json" -d '{ "name": "John", "age": 22, "gender": "female" }'`
+
+```json
+{
+  "actor": {
+    "age": 22,
+    "gender": "female",
+    "id": 3,
+    "name": "John"
+  },
+  "success": true
+}
+```
+
+#### DELETE /actors/<int:id\>
+
+- General:
+
+  - Deletes an actor by id form the url parameter.
+  - Roles authorized : Casting Director,Executive Producer.
+
+- Sample: `curl http://127.0.0.1:5000/actors/3 -X DELETE`
+
+```json
+{
+  "message": "actor id 3, named John was deleted",
+  "success": true
+}
+```
+
+
+
+## Database Setup
+
+The project uses Postgresql as its database, you would need to create one locally and reflect it in setup.sh.
+To update the database and seed run the following :
+
+```bash
+python manage.py db upgrade
+python manage.py seed
+```
+
+- you may need to change the database url in setup.sh after which you can run
+
+```bash
+source setup.sh
+```
+
+- Start server by running
+
+```bash
+flask run
+```
 
 ##### Key Dependencies
 
-- [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
+- [Flask](http://flask.pocoo.org/) is a lightweight backend microservices framework. Flask is required to handle requests and responses.
 
-- [SQLAlchemy](https://www.sqlalchemy.org/) and [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/) are libraries to handle the lightweight sqlite database. Since we want you to focus on auth, we handle the heavy lift for you in `./src/database/models.py`. We recommend skimming this code first so you know how to interface with the Drink model.
+- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py.
 
-- [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
+- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server.
 
-## Running the server
+- [Pycodestyle](https://pypi.org/project/pycodestyle/) - pycodestyle is a tool to check your Python code against some of the style conventions in PEP 8.
 
-From within the `./src` directory first ensure you are working using your created virtual environment.
+## Testing
 
-Each time you open a new terminal session, run:
+Replace the jwt tokens in test_app.py with the ones generated on the website.
 
-```bash
-export FLASK_APP=api.py;
+For testing locally, we need to reset database.
+To reset database, run
+
+```
+python manage.py db downgrade
+python manage.py db upgrade
+python manage.py seed
 ```
 
-To run the server, execute:
+### Error Handling
 
-```bash
-flask run --reload
+- 401 errors due to RBAC are returned as
+
+```json
+{
+  "code": "unauthorized",
+  "description": "Permission not found."
+}
 ```
 
-The `--reload` flag will detect file changes and restart the server automatically.
+Other Errors are returned in the following json format:
 
-# Example Auth0- For implementing yourself:
+```json
+{
+  "success": "False",
+  "error": 422,
+  "message": "Unprocessable entity"
+}
+```
 
-Can modify the project to meet your needs.
+The error codes currently returned are:
 
-postman-collection.json can be found in ./backend directory which helps to run and test the corresponding endpoints. Possible JWT are also shown.
-
-### Setup Auth0
-
-1. Create a new Auth0 Account
-2. Select a unique tenant domain
-3. Create a new, single page web application
-4. Create a new API
-    - in API Settings:
-        - Enable RBAC
-        - Enable Add Permissions in the Access Token
-5. Create new API permissions:
-    - `get:drinks-detail`
-    - `post:drinks`
-    - `patch:drinks`
-    - `delete:drinks`
-6. Create new roles for:
-    - Barista
-        - can `get:drinks-detail`
-    - Manager
-        - can perform all actions
-7. Test your endpoints with [Postman](https://getpostman.com). 
-    - Register 2 users - assign the Barista role to one and Manager role to the other.
-    - Sign into each account and make note of the JWT.
-    - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
+- 400 – bad request
+- 401 – unauthorized
+- 404 – resource not found
+- 422 – unprocessable
+- 500 – internal server error
