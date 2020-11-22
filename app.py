@@ -19,6 +19,7 @@ AUTH0_AUDIENCE = constants.AUTH0_AUDIENCE
 
 
 app = Flask(__name__)
+app.secret_key = "super secret key"
 setup_db(app)
 CORS(app)
 
@@ -37,7 +38,6 @@ def after_request(response):
                              'GET,PATCH,POST,DELETE,OPTIONS')
     return response
 
-"""
 oauth = OAuth(app)
 
 auth0 = oauth.register(
@@ -48,12 +48,15 @@ auth0 = oauth.register(
     access_token_url=AUTH0_BASE_URL + '/oauth/token',
     authorize_url=AUTH0_BASE_URL + '/authorize',
     client_kwargs={
-        'scope': 'openid profile email',
-    },
+    'scope': 'openid profile email',
+    }
 )
-"""
 
+@app.route('/login')
+def login():
+    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE)
 
+'''
 @app.route('/login')
 def login():
     """Redirect to login page"""
@@ -64,12 +67,8 @@ def login():
         '&client_id={}'.format(AUTH0_CLIENT_ID)+
         '&redirect_uri={}'.format(AUTH0_CALLBACK_URL))
     
-    print(login_uri)
-
-    return redirect(login_uri, 301)
-
-
-"""
+    return auth0.authorize_redirect(redirect_uri=login_uri)
+'''
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
@@ -81,7 +80,7 @@ def callback_handling():
     session['jwt_token'] = token
 
     return redirect('/movies')
-"""
+
 
 
 """MOVIES ROUTES"""
