@@ -57,7 +57,6 @@ def login():
     return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE)
 
 @app.route('/dashboard')
-@requires_signed_in
 def dashboard():
     token=session['jwt_token']
     return jsonify({
