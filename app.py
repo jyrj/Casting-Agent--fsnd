@@ -56,16 +56,8 @@ auth0 = oauth.register(
 def login():
     return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE)
 
-@app.route('/dashboard')
-def dashboard():
-    token=session['jwt_token']
-    return jsonify({
-        "success": True,
-        "auth": True,
-        "jwt": token
-    })
-
 '''
+
 @app.route('/login')
 def login():
     """Redirect to login page"""
@@ -74,12 +66,15 @@ def login():
         '?audience={}'.format(AUTH0_AUDIENCE)+
         '&response_type=token'+
         '&client_id={}'.format(AUTH0_CLIENT_ID)+
-        '&redirect_uri={}'.format(AUTH0_CALLBACK_URL))
+        '&redirect_uri={}'.format('http://127.0.0.1:5000/movies')    #AUTH0_CALLBACK_URL)
+        )
     
-    return auth0.authorize_redirect(redirect_uri=login_uri)
+    return redirect(login_uri)
 '''
 
+
 @app.route('/callback')
+@requires_signed_in
 def callback_handling():
     # Handles response from token endpoint
 
