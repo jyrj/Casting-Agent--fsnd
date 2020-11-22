@@ -5,8 +5,7 @@ from jose import jwt
 from urllib.request import urlopen
 import os
 
-AUTH0_DOMAIN = 'casting-agency-udacitycapstone.us.auth0.com'
-#os.environ['AUTH0_DOMAIN']
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'casting-agency'
 
