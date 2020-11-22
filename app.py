@@ -1,11 +1,21 @@
 import os
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, session, redirect
 from sqlalchemy import exc
 import json
 from flask_cors import CORS
+from src.auth.auth import AuthError, requires_auth, requires_signed_in
+from authlib.integrations.flask_client import OAuth
+from six.moves.urllib.parse import urlencode
+import constants
 
 from src.database.models import db_drop_and_create_all, setup_db, Movie, Actor
-#from .auth.auth import AuthError, requires_auth
+
+AUTH0_CALLBACK_URL = constants.AUTH0_CALLBACK_URL
+AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
+AUTH0_CLIENT_SECRET = os.environ['AUTH0_CLIENT_SECRET']
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
+AUTH0_BASE_URL = 'https://' + os.environ['AUTH0_DOMAIN']
+AUTH0_AUDIENCE = constants.AUTH0_AUDIENCE
 
 app = Flask(__name__)
 setup_db(app)
@@ -15,10 +25,55 @@ CORS(app)
 
 # ROUTES
 
+
+@app.after_request
+def after_request(response):
+
+    response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+
+    response.headers.add('Access-Control-Allow-Methods',
+                             'GET,PATCH,POST,DELETE,OPTIONS')
+    return response
+
+oauth = OAuth(app)
+
+auth0 = oauth.register(
+    'auth0',
+    client_id=AUTH0_CLIENT_ID,
+    client_secret=AUTH0_CLIENT_SECRET,
+    api_base_url=AUTH0_BASE_URL,
+    access_token_url=AUTH0_BASE_URL + '/oauth/token',
+    authorize_url=AUTH0_BASE_URL + '/authorize',
+    client_kwargs={
+        'scope': 'openid profile email',
+    },
+)
+
+
+@app.route('/login')
+def login():
+    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL,
+                                        audience=AUTH0_AUDIENCE)
+
+@app.route('/callback')
+def callback_handling():
+    # Handles response from token endpoint
+
+    res = auth0.authorize_access_token()
+    token = res.get('access_token')
+
+    # Store the user information in flask session.
+    session['jwt_token'] = token
+
+    return redirect('/movies')
+
+
 '''MOVIES ROUTES'''
 
 @app.route('/movies', methods=['GET'])
-def get_movies():
+@requires_auth('get:movies')
+def get_movies(jwt):
     '''Get all movies'''
     movies = Movie.query.all()
 
