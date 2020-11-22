@@ -23,8 +23,7 @@ class CastingAgencyTest(unittest.TestCase):
             'title': 'Kungfu Masters',
             'release_date': '2020-05-06',
         }
-        self.database_path = 'postgres://bvrlpffleqganr:ed2f4bd02acae685c787adbbb555fca5cd4643f2a544c545dd453b6c369bd8ce@ec2-3-216-92-193.compute-1.amazonaws.com:5432/dd6rfv7k6b0hmk'
-        #os.environ['DATABASE_URL']
+        self.database_path = os.environ['DATABASE_URL']
 
         setup_db(self.app, self.database_path)
 
