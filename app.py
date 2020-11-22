@@ -37,7 +37,7 @@ def after_request(response):
                              'GET,PATCH,POST,DELETE,OPTIONS')
     return response
 
-
+"""
 oauth = OAuth(app)
 
 auth0 = oauth.register(
@@ -51,6 +51,7 @@ auth0 = oauth.register(
         'scope': 'openid profile email',
     },
 )
+"""
 
 
 @app.route('/login')
@@ -67,6 +68,8 @@ def login():
 
     return redirect(login_uri, 301)
 
+
+"""
 @app.route('/callback')
 def callback_handling():
     # Handles response from token endpoint
@@ -78,6 +81,7 @@ def callback_handling():
     session['jwt_token'] = token
 
     return redirect('/movies')
+"""
 
 
 """MOVIES ROUTES"""
