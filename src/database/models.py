@@ -12,36 +12,42 @@ setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
 
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+
 
 '''
 db_drop_and_create_all()
     drops the database tables and starts fresh
     can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to have multiple verisons of a database
+    !!NOTE you can change the database_filename variable to have multiple
+    verisons of a database
 '''
+
 
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
+
 '''
 Movies
-a persistent movies entity with title and release date as attributes, extends the base SQLAlchemy Model
+a persistent movies entity with title and release date as attributes, extends
+the base SQLAlchemy Model
 '''
 
+
 class Movie(db.Model):
-    __tablename__= "movies"
+    __tablename__ = "movies"
 
     id = Column(Integer(), primary_key=True)
     title = Column(String(120), unique=True, nullable=False)
-    release_date =  Column(db.DateTime(), nullable=False)
+    release_date = Column(db.DateTime(), nullable=False)
 
-    
     def format(self):
         return{
             "id": self.id,
@@ -91,16 +97,16 @@ class Movie(db.Model):
         return json.dumps(self.movies_model())
     '''
 
+
 class Actor(db.Model):
-    __tablename__="actors"
-    
+    __tablename__ = "actors"
+
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), nullable=False)
     age = Column(Integer(), nullable=False)
     gender = Column(String(26), nullable=False)
 
-    #movies = db.relationship('Movie', backref="actors", lazy=True)
-    
+    # movies = db.relationship('Movie', backref="actors", lazy=True)
 
     def format(self):
         return{
@@ -116,7 +122,8 @@ class Actor(db.Model):
         the model must have a unique name
         the model must have a unique id or null id
         EXAMPLE
-            actor = Actors(name=actor_name, age=actor_age_in_number, gender=gender_of_actor)
+            actor = Actors(name=actor_name, age=actor_age_in_number,
+            gender=gender_of_actor)
             actor.insert()
     '''
     def insert(self):
@@ -128,7 +135,8 @@ class Actor(db.Model):
         deletes a new model into a database
         the model must exist in the database
         EXAMPLE
-            actor = Actors(name=actor_name, age=actor_age_in_number, gender=gender_of_actor)
+            actor = Actors(name=actor_name, age=actor_age_in_number,
+            gender=gender_of_actor)
             actor.delete()
     '''
     def delete(self):
