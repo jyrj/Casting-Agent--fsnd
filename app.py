@@ -23,7 +23,7 @@ app.secret_key = "super secret key"
 setup_db(app)
 CORS(app)
 
-#db_drop_and_create_all() #uncomment this line for starting database from scratch
+# db_drop_and_create_all() uncomment this line for clearing db
 
 # ROUTES
 
@@ -32,13 +32,15 @@ CORS(app)
 def after_request(response):
 
     response.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type,Authorization,true')
+                         'Content-Type,Authorization,true')
 
     response.headers.add('Access-Control-Allow-Methods',
-                             'GET,PATCH,POST,DELETE,OPTIONS')
+                         'GET,PATCH,POST,DELETE,OPTIONS')
     return response
 
+
 oauth = OAuth(app)
+
 
 auth0 = oauth.register(
     'auth0',
@@ -48,29 +50,33 @@ auth0 = oauth.register(
     access_token_url=AUTH0_BASE_URL + '/oauth/token',
     authorize_url=AUTH0_BASE_URL + '/authorize',
     client_kwargs={
-    'scope': 'openid profile email',
-    }
-)
+        'scope': 'openid profile email',
+        }
+    )
+
 
 @app.route('/login')
 def login():
-    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE)
+    return auth0.authorize_redirect(
+        redirect_uri=AUTH0_CALLBACK_URL,
+        audience=AUTH0_AUDIENCE)
 
-'''
+
+"""
 
 @app.route('/login')
 def login():
-    """Redirect to login page"""
+    '''Redirect to login page'''
     login_uri = ('https://'+AUTH0_DOMAIN+
         '/authorize'+
         '?audience={}'.format(AUTH0_AUDIENCE)+
         '&response_type=token'+
         '&client_id={}'.format(AUTH0_CLIENT_ID)+
-        '&redirect_uri={}'.format('http://127.0.0.1:5000/movies')    #AUTH0_CALLBACK_URL)
+        '&redirect_uri={}'.format('http://127.0.0.1:5000/movies')
+        #AUTH0_CALLBACK_URL)
         )
-    
     return redirect(login_uri)
-'''
+"""
 
 
 @app.route('/callback')
@@ -87,8 +93,8 @@ def callback_handling():
     return redirect('/dashboard')
 
 
-
 """MOVIES ROUTES"""
+
 
 @app.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
@@ -101,13 +107,14 @@ def get_movies(jwt):
         'movies': [movie.format() for movie in movies]
     }), 200
 
+
 @app.route('/movies/<int:id>', methods=['GET'])
 @requires_auth('get:movies')
 def get_movies_by_id(jwt, id):
     """Get a specific movie route"""
     movie = Movie.query.get(id)
 
-    #return 404 if there is no movie with id
+    # return 404 if there is no movie with id
     if movie is None:
         abort(404)
     else:
@@ -141,6 +148,7 @@ def post_movie(jwt):
     except Exception:
         abort(500)
 
+
 @app.route('/movies/<int:id>', methods=['PATCH'])
 @requires_auth('patch:movies')
 def patch_movie(jwt, id):
@@ -170,27 +178,30 @@ def patch_movie(jwt, id):
     except Exception:
         abort(500)
 
+
 @app.route('/movies/<int:id>', methods=['DELETE'])
 @requires_auth('delete:movies')
 def delete_movie(jwt, id):
     """Delete a movie from table"""
     movie = Movie.query.get(id)
-    
     if movie is None:
         abort(404)
     try:
         movie.delete()
         return jsonify({
             'success': True,
-            'message': 'movies id {}, titled {} was deleted'.format(movie.id, movie.title)
+            'message': 'movies id {}, titled {} was deleted'.format(
+                movie.id,
+                movie.title
+            )
         })
     except Exception:
         db.session.rollback()
         abort(500)
 
 
-
 """ACTORS ROUTES"""
+
 
 @app.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
@@ -212,7 +223,7 @@ def get_actor_by_id(jwt, id):
 
     actor = Actor.query.get(id)
 
-    #return 404 if Actor with ID is not present
+    # return 404 if Actor with ID is not present
     if actor is None:
         abort(404)
     else:
@@ -220,6 +231,7 @@ def get_actor_by_id(jwt, id):
             'success': True,
             'actor': actor.format()
         }), 200
+
 
 @app.route('/actors', methods=['POST'])
 @requires_auth('post:actors')
@@ -235,7 +247,7 @@ def post_actor(jwt):
     if name is None or age is None or gender is None:
         abort(400)
 
-    actor = Actor(name=name, age= age, gender= gender)
+    actor = Actor(name=name, age=age, gender=gender)
 
     try:
         actor.insert()
@@ -243,7 +255,7 @@ def post_actor(jwt):
             'success': True,
             'actor': actor.format()
         }), 201
-    
+
     except Exception:
         abort(500)
 
@@ -278,7 +290,7 @@ def patch_actor(jwt, id):
         }), 200
     except Exception:
         abort(500)
-        
+
 
 @app.route('/actors/<int:id>', methods=['DELETE'])
 @requires_auth('delete:actors')
@@ -294,15 +306,17 @@ def delete_actor(jwt, id):
         actor.delete()
         return jsonify({
             'success': True,
-            'message': 'actor id {}, named {} was deleted'.format(actor.id, actor.name)
+            'message': 'actor id {}, named {} was deleted'.format(
+                actor.id, actor.name)
         })
     except Exception:
         db.session.rollback()
         abort(500)
 
 
-
 # Error Handling
+
+
 @app.errorhandler(422)
 def unprocessable(error):
     return jsonify({
@@ -310,6 +324,7 @@ def unprocessable(error):
         "error": 422,
         "message": "unprocessable"
     }), 422
+
 
 @app.errorhandler(404)
 def resource_not_found(error):
@@ -319,6 +334,7 @@ def resource_not_found(error):
         "message": "resource not found"
     }), 404
 
+
 @app.errorhandler(400)
 def bad_request(error):
     return jsonify({
@@ -326,6 +342,7 @@ def bad_request(error):
         "error": 400,
         "message": "bad request"
     }), 400
+
 
 @app.errorhandler(500)
 def internal_server_error(error):
@@ -335,13 +352,12 @@ def internal_server_error(error):
         "message": "internal server error"
     }), 500
 
+
 @app.errorhandler(AuthError)
 def handle_auth_error(exception):
     response = jsonify(exception.error)
     response.status_code = exception.status_code
     return response
-
-
 
 
 if __name__ == "__main__":
