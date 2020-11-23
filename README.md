@@ -320,3 +320,11 @@ The error codes currently returned are:
 - 404 – resource not found
 - 422 – unprocessable
 - 500 – internal server error
+
+### Testing
+
+- For testing the endpoints and RBAC, use test_app.py
+
+```
+python test_app.py
+```
