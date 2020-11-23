@@ -2,7 +2,9 @@
 
 [Link towards API](https://casting-agency-jyrj.herokuapp.com/)
 
-This project is my capstone project for Udacity's Fullstack Nanodegree program. This application will serve as a backend for a company that is responsible for creating movies and managing and assigning actors to those movies.
+### Motivation for this project
+
+This project is my capstone project for Udacity's Fullstack Nanodegree program. The motivation for the casting agency backend has been provided by Udacity. This application will serve as a backend for a company that is responsible for creating movies and managing and assigning actors to those movies.
 Authorized users can interact with the API to view, add, update, delete Movies and Actors details. (RBAC enabled)
 
 
@@ -245,6 +247,19 @@ This will install all of the required packages we selected within the `requireme
 }
 ```
 
+## RBAC - Role Based Access Control
+
+Authentication setup:
+
+The model is having 3 roles
+  - Casting assistant: View data from both Actors and Movies models using GET.
+  - Casting DIrector: Permissions of assistant with, update actors and movies, add or delete actor.
+  - Executive Producer: Permissions of Director with, add/ delete movies.
+
+For the purpose of assesment from Udacity reviewer, I'm providing corresponding Role's JWT which could be used for evaluation purpose. The same could be found in the file jwt_values.py
+
+Successfully tested with Postman. JWT Tokens has set to an expiration of 24 hours.
+
 
 
 ## Database Setup
@@ -259,11 +274,20 @@ python manage.py seed
 
 - you may need to change the database url in setup.sh after which you can run
 
+[IMP]: Please check the environment variables in [setup.sh](setup.sh) before proceeding to run the application.
+
 ```bash
-source setup.sh
+source ./setup.sh
 ```
 
-- Start server by running
+Start server by running
+
+```bash
+python app.py
+```
+The above will work, well-configured for Heroku deployment.
+
+Below won't work (some small packaging issues with dependencies throw error showing cyclic import exception. Or we must use the same directory for all python files, which I don't prefer)
 
 ```bash
 flask run

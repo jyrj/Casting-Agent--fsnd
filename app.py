@@ -63,7 +63,6 @@ def login():
 
 
 """
-
 @app.route('/login')
 def login():
     '''Redirect to login page'''
@@ -72,9 +71,9 @@ def login():
         '?audience={}'.format(AUTH0_AUDIENCE)+
         '&response_type=token'+
         '&client_id={}'.format(AUTH0_CLIENT_ID)+
-        '&redirect_uri={}'.format('http://127.0.0.1:5000/movies')
-        #AUTH0_CALLBACK_URL)
-        )
+        '&redirect_uri={}'.format('http://127.0.0.1:5000/callback')
+        # AUTH0_CALLBACK_URL)
+    )
     return redirect(login_uri)
 """
 
@@ -90,7 +89,7 @@ def callback_handling():
     # Store the user information in flask session.
     session['jwt_token'] = token
 
-    return redirect('/dashboard')
+    return redirect('https://casting-agency-jyrj.herokuapp.com/movies')
 
 
 """MOVIES ROUTES"""

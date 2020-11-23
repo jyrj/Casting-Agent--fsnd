@@ -20,7 +20,6 @@ def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
     """
     auth = request.headers.get('Authorization', None)
-    # print(auth)
 
     if not auth:
         raise AuthError({
@@ -48,7 +47,6 @@ def get_token_auth_header():
         }, 401)
 
     token = parts[1]
-    # print(token)
     return token
 
 
